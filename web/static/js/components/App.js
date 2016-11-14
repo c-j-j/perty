@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import UserRegisterForm from 'web/static/js/components/UserRegisterForm'
 import {Socket} from "phoenix"
 
 function OtherEstimates(props) {
@@ -20,7 +21,7 @@ function UserEstimates(props) {
       <input type="number" placeholder="optimistic"/>
       <input type="number" placeholder="realistic"/>
       <input type="number" placeholder="pessimistic"/>
-      <input type="submit" value="Estimate" onClick={props.handleUpdate}/>
+      <input type="submit" value="Estimate" />
     </div>
   )
 }
@@ -34,10 +35,10 @@ export default class App extends React.Component {
   componentWillMount() {
     let socket = new Socket("/socket", {})
     socket.connect()
-    let channel = socket.channel("room:lobby", {user_id: 123})
+    let channel = socket.channel("room:lobby", {})
 
     channel.join("Hello")
-           .receive("ok", resp => {console.log(respBar)})
+           .receive("ok", resp => {console.log(resp)})
            .receive("error", resp => {console.log("Unable to connect")})
 
     channel.on("new_user", payload => {
@@ -50,10 +51,6 @@ export default class App extends React.Component {
       console.log(payload)
     })
     this.setState({channel: channel})
-  }
-
-  fetchAllUsers(channel) {
-    //channel.push()
   }
 
   render() {
@@ -79,27 +76,18 @@ export default class App extends React.Component {
   renderLoggedInUser() {
     if (this.state.loggedIn) {
       return(
-        <UserEstimates name="Chris" handleUpdate={this.handleUpdate} />
+        <UserEstimates name="Chris" />
       )
     } else {
       return(
-        <div>
-          <input type="text" placeholder="Enter name" />
-          <input type="submit" value="Enter room" onClick={this.logUserIn.bind(this)} />
-        </div>
+        <UserRegisterForm handleRegister={this.handleNewUser.bind(this)}/>
       )
     }
   }
 
-  logUserIn() {
-    this.state.channel.push("new_user", {username: "Chris", user_id: 123})
-  }
-
-  userLoggedIn() {
-    this.setState({loggedIn: true})
-  }
-
-  handleUpdate() {
-    console.log("Hello");
+  handleNewUser(username) {
+    this.state.channel.push("new_user", {username: username})
+        .receive("ok", (reply) => console.log(reply))
+        .receive("error", (reply) => console.log(reply))
   }
 }

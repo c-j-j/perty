@@ -19,12 +19,12 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from 'web/static/js/socket'
-import ReactDOM from 'react-dom'
 import React from 'react'
-import App from 'web/static/js/components/App'
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelector('#story')) {
-    ReactDOM.render(<App />, document.querySelector('#story'));
+export default class Home extends React.Component {
+  render() {
+    return (
+      <p>Homepage</p>
+    )
   }
-});
+}

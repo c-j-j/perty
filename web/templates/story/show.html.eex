@@ -1,0 +1,16 @@
+<h2>Show story</h2>
+
+<div id="story">
+</div>
+
+<ul>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @story.description %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: story_path(@conn, :edit, @story) %>
+<%= link "Back", to: story_path(@conn, :index) %>
