@@ -2,7 +2,7 @@ import React from 'react'
 import UserRegisterForm from 'web/static/js/components/UserRegisterForm'
 import {Socket} from "phoenix"
 
-function OtherEstimates(props) {
+function OtherEstimate(props) {
   return (
     <div>
       <label>{props.name}</label>
@@ -29,7 +29,7 @@ function UserEstimates(props) {
 export default class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {loggedIn: false}
+    this.state = {users: []}
   }
 
   componentWillMount() {
@@ -41,9 +41,8 @@ export default class App extends React.Component {
            .receive("ok", resp => {console.log(resp)})
            .receive("error", resp => {console.log("Unable to connect")})
 
-    channel.on("new_user", payload => {
-      console.log("NEW USER");
-      console.log(payload)
+    channel.on("new_user", ({username}) => {
+      this.addNewUser(username)
     })
 
     channel.on("user_joined", payload => {
@@ -51,6 +50,10 @@ export default class App extends React.Component {
       console.log(payload)
     })
     this.setState({channel: channel})
+  }
+
+  addNewUser(username) {
+    this.setState({users: this.state.users.concat(username)})
   }
 
   render() {
@@ -65,18 +68,24 @@ export default class App extends React.Component {
   }
 
   renderUsers() {
+    const renderedUsers = this.state.users.map(this.renderUser)
     return (
       <div>
-        <OtherEstimates name="John"/>
-        <OtherEstimates name="Terry"/>
+        {renderedUsers}
       </div>
     )
   }
 
+  renderUser(name) {
+    return (
+      <OtherEstimate key={name} name={name} />
+    )
+  }
+
   renderLoggedInUser() {
-    if (this.state.loggedIn) {
+    if (this.state.username) {
       return(
-        <UserEstimates name="Chris" />
+        <UserEstimates name={this.state.username} />
       )
     } else {
       return(
@@ -87,7 +96,12 @@ export default class App extends React.Component {
 
   handleNewUser(username) {
     this.state.channel.push("new_user", {username: username})
-        .receive("ok", (reply) => console.log(reply))
+        .receive("ok", ({user_id}) => this.logNewUserIn(username, user_id))
         .receive("error", (reply) => console.log(reply))
+  }
+
+  logNewUserIn(username, user_id) {
+    this.setState({username: username,
+                   user_id: user_id})
   }
 }
