@@ -35,21 +35,29 @@ export default class App extends React.Component {
   componentWillMount() {
     let socket = new Socket("/socket", {})
     socket.connect()
-    let channel = socket.channel("room:lobby", {})
 
-    channel.join("Hello")
-           .receive("ok", resp => {console.log(resp)})
-           .receive("error", resp => {console.log("Unable to connect")})
+    let channel = this.joinChannel(socket)
+
+    channel.on("logged_in", ({username, user_id}) => {
+      this.setState({username: username,
+                     user_id: user_id})
+    })
 
     channel.on("new_user", ({username}) => {
       this.addNewUser(username)
     })
 
-    channel.on("user_joined", payload => {
-      console.log("USER JOINED");
-      console.log(payload)
-    })
     this.setState({channel: channel})
+  }
+
+  joinChannel(socket) {
+    let channel = fetchChannel(socket)
+
+    channel.join()
+           .receive("ok", resp => {console.log("Joined channel")})
+           .receive("error", resp => {console.log("Unable to join channel")})
+
+    return channel
   }
 
   addNewUser(username) {
@@ -95,13 +103,24 @@ export default class App extends React.Component {
   }
 
   handleNewUser(username) {
-    this.state.channel.push("new_user", {username: username})
+    this.state.channel.push("register", {username: username})
         .receive("ok", ({user_id}) => this.logNewUserIn(username, user_id))
         .receive("error", (reply) => console.log(reply))
   }
 
   logNewUserIn(username, user_id) {
+    localStorage.setItem("user_id", user_id)
     this.setState({username: username,
                    user_id: user_id})
+  }
+}
+
+function fetchChannel(socket) {
+  const stored_user_id = localStorage.getItem('user_id')
+
+  if (stored_user_id) {
+    return socket.channel("room:lobby", {user_id: stored_user_id})
+  } else {
+    return socket.channel("room:lobby", {})
   }
 }
