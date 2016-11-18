@@ -20,11 +20,17 @@ import "phoenix_html"
 
 // import socket from 'web/static/js/socket'
 import React from 'react'
+import { Link } from 'react-router'
+
 
 export default class Home extends React.Component {
   render() {
     return (
-      <p>Homepage</p>
+      <div>
+        <h1>Homepage</h1>
+
+        <Link to="/stories/new">Create New Room</Link>
+      </div>
     )
   }
 }

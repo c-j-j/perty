@@ -22,9 +22,36 @@ import "phoenix_html"
 import ReactDOM from 'react-dom'
 import React from 'react'
 import App from 'web/static/js/components/App'
+import Home from 'web/static/js/components/Home'
+import NewRoom from 'web/static/js/components/NewRoom'
+import { render } from 'react-dom'
+import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router'
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelector('#story')) {
-    ReactDOM.render(<App />, document.querySelector('#story'));
-  }
-});
+function NoMatch(props) {
+  return (
+    <p>Sorry, no such page</p>
+  )
+}
+
+function Layout(props) {
+  return (
+    <div>
+      <h1>Perty</h1>
+      {props.children}
+    </div>
+  )
+}
+
+render((
+  <Router history={browserHistory}>
+    <Route path="/" component={Layout}>
+      <IndexRoute component={Home} />
+      <Route path="stories">
+        <Route path="new" component={NewRoom}/>
+        <Route path="/story/:storyId" component={NewRoom}/>
+        <Route path="/user/:userId" component={App}/>
+      </Route>
+      <Route path="/foo" component={NoMatch}/>
+    </Route>
+  </Router>
+), document.getElementById('root'))
