@@ -5,7 +5,6 @@ defmodule Perty.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
-    plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
@@ -21,7 +20,9 @@ defmodule Perty.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", Perty do
-  #   pipe_through :api
-  # end
+  scope "/api", Perty do
+    pipe_through :api
+
+    resources "/rooms", RoomController, except: [:edit]
+  end
 end

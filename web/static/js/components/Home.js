@@ -29,7 +29,7 @@ export default class Home extends React.Component {
       <div>
         <h1>Homepage</h1>
 
-        <Link to="/stories/new">Create New Room</Link>
+        <Link to="/rooms/new">Create New Room</Link>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 defmodule Perty.RoomChannel do
   use Phoenix.Channel
 
-  def join("room:lobby", message, socket) do
+  def join("room:" <> room_id, message, socket) do
     case message do
       %{"user_id" => user_id} ->
         send(self, {:after_join, user_id})
