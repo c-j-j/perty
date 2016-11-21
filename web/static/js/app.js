@@ -21,7 +21,7 @@ import "phoenix_html"
 // import socket from 'web/static/js/socket'
 import ReactDOM from 'react-dom'
 import React from 'react'
-import App from 'web/static/js/components/App'
+import Room from 'web/static/js/components/Room'
 import Home from 'web/static/js/components/Home'
 import NewRoom from 'web/static/js/components/NewRoom'
 import { render } from 'react-dom'
@@ -46,12 +46,11 @@ render((
   <Router history={browserHistory}>
     <Route path="/" component={Layout}>
       <IndexRoute component={Home} />
-      <Route path="stories">
+      <Route path="rooms">
         <Route path="new" component={NewRoom}/>
-        <Route path="/story/:storyId" component={NewRoom}/>
-        <Route path="/user/:userId" component={App}/>
+        <Route path="room/:roomId" component={Room}/>
       </Route>
-      <Route path="/foo" component={NoMatch}/>
+      <Route path="*" component={NoMatch}/>
     </Route>
   </Router>
 ), document.getElementById('root'))

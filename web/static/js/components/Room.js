@@ -26,7 +26,7 @@ function UserEstimates(props) {
   )
 }
 
-export default class App extends React.Component {
+export default class Room extends React.Component {
   constructor(props) {
     super(props)
     this.state = {users: []}
@@ -51,7 +51,7 @@ export default class App extends React.Component {
   }
 
   joinChannel(socket) {
-    let channel = fetchChannel(socket)
+    let channel = this.fetchChannel(socket)
 
     channel.join()
            .receive("ok", resp => {console.log("Joined channel")})
@@ -113,14 +113,18 @@ export default class App extends React.Component {
     this.setState({username: username,
                    user_id: user_id})
   }
-}
 
-function fetchChannel(socket) {
-  const stored_user_id = localStorage.getItem('user_id')
+  fetchChannel(socket) {
+    const stored_user_id = localStorage.getItem('user_id')
 
-  if (stored_user_id) {
-    return socket.channel("room:lobby", {user_id: stored_user_id})
-  } else {
-    return socket.channel("room:lobby", {})
+    if (stored_user_id) {
+      return socket.channel(this.channelName(), {user_id: stored_user_id})
+    } else {
+      return socket.channel(this.channelName(), {})
+    }
+  }
+
+  channelName() {
+   return "room:${this.props.params.roomId}"
   }
 }
