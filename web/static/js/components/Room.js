@@ -1,6 +1,7 @@
 import React from 'react'
-import UserRegisterForm from 'web/static/js/components/UserRegisterForm'
-import {Socket} from "phoenix"
+import UserView from '../components/UserView'
+import OtherUsersView from '../components/OtherUsersView'
+import {Socket} from 'phoenix'
 
 function OtherEstimate(props) {
   return (
@@ -14,18 +15,6 @@ function OtherEstimate(props) {
   )
 }
 
-function UserEstimates(props) {
-  return (
-    <div>
-      <label>{props.name}</label>
-      <input type="number" placeholder="optimistic"/>
-      <input type="number" placeholder="realistic"/>
-      <input type="number" placeholder="pessimistic"/>
-      <input type="submit" value="Estimate" />
-    </div>
-  )
-}
-
 export default class Room extends React.Component {
   constructor(props) {
     super(props)
@@ -33,7 +22,7 @@ export default class Room extends React.Component {
   }
 
   componentWillMount() {
-    let socket = new Socket("/socket", {})
+    const socket = new Socket("/socket", {})
     socket.connect()
 
     let channel = this.joinChannel(socket)
@@ -58,6 +47,20 @@ export default class Room extends React.Component {
            .receive("error", resp => {console.log("Unable to join channel")})
 
     return channel
+  }
+
+  fetchChannel(socket) {
+    const stored_user_id = localStorage.getItem('user_id')
+
+    if (stored_user_id) {
+      return socket.channel(this.channelName(), {user_id: stored_user_id})
+    } else {
+      return socket.channel(this.channelName(), {})
+    }
+  }
+
+  channelName() {
+   return "room:${this.props.params.roomId}"
   }
 
   addNewUser(username) {
@@ -91,15 +94,12 @@ export default class Room extends React.Component {
   }
 
   renderLoggedInUser() {
-    if (this.state.username) {
-      return(
-        <UserEstimates name={this.state.username} />
-      )
-    } else {
-      return(
-        <UserRegisterForm handleRegister={this.handleNewUser.bind(this)}/>
-      )
-    }
+    return (
+      <div>
+        <OtherUsersView />
+        <UserView />
+      </div>
+    );
   }
 
   handleNewUser(username) {
@@ -112,19 +112,5 @@ export default class Room extends React.Component {
     localStorage.setItem("user_id", user_id)
     this.setState({username: username,
                    user_id: user_id})
-  }
-
-  fetchChannel(socket) {
-    const stored_user_id = localStorage.getItem('user_id')
-
-    if (stored_user_id) {
-      return socket.channel(this.channelName(), {user_id: stored_user_id})
-    } else {
-      return socket.channel(this.channelName(), {})
-    }
-  }
-
-  channelName() {
-   return "room:${this.props.params.roomId}"
   }
 }

@@ -54,5 +54,5 @@ export default class NewRoom extends React.Component {
 }
 
 function redirectToNewRoom(roomId) {
-  browserHistory.push(`/rooms/${roomId}`)
+  browserHistory.push(`/rooms/room/${roomId}`)
 }
