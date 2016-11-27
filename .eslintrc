@@ -1,0 +1,64 @@
+{
+  "rules": {
+    "indent": ["warn", 2, {
+      "VariableDeclarator": {
+        "var": 2,
+        "let": 2,
+        "const": 3
+      },
+      "SwitchCase": 1
+    }],
+    "semi": ["warn", "never"],
+    "lines-around-comment": ["warn", { // Empty line before block and line comments
+      "beforeBlockComment": false,
+      "beforeLineComment": false
+    }],
+    "no-trailing-spaces": "error",
+    "max-len": ["error", 160, 2, {"ignoreComments": true, "ignoreTrailingComments": true}],
+    "quotes": ["warn", "single", "avoid-escape"],
+    "prefer-const": "warn",
+    "no-invalid-this": "error",
+    "no-var": "warn",
+    "no-nested-ternary": "error",
+    "no-cond-assign": "error",
+    "eqeqeq": ["warn", "smart"],
+    "no-console": ["error", {
+      "allow": ["error"]
+    }],
+    "no-extra-semi": "warn",
+    "no-unused-vars": ["warn", {"varsIgnorePattern": "unused"}],
+    "no-undef": "error",
+    "react/sort-comp": ["warn", {
+      order: [
+               "lifecycle",
+             "render",
+             "everything-else"
+      ]
+    }],
+    "react/jsx-no-duplicate-props": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/no-unknown-property": "error",
+    "react/self-closing-comp": "warn",
+    "react/jsx-uses-vars": "error",
+    "react/jsx-uses-react": "error",
+    "jsx-quotes": ["error", "prefer-double"]
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jquery": true,
+    "jasmine": true,
+    "commonjs": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "plugins": [
+    "react"
+  ]
+}

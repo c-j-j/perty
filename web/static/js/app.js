@@ -24,10 +24,18 @@ import React from 'react'
 import Room from 'web/static/js/components/Room'
 import Home from 'web/static/js/components/Home'
 import NewRoom from 'web/static/js/components/NewRoom'
-import { render } from 'react-dom'
-import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router'
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import Reducer from './reducers'
 
-function NoMatch(props) {
+
+import { applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import promise from 'redux-promise'
+import createLogger from 'redux-logger'
+
+function NoMatch() {
   return (
     <p>Sorry, no such page</p>
   )
@@ -42,15 +50,20 @@ function Layout(props) {
   )
 }
 
-render((
-  <Router history={browserHistory}>
-    <Route path="/" component={Layout}>
-      <IndexRoute component={Home} />
-      <Route path="rooms">
-        <Route path="new" component={NewRoom}/>
-        <Route path="room/:roomId" component={Room}/>
+const logger = createLogger()
+const store = createStore(Reducer,
+                          applyMiddleware(thunk, promise, logger))
+
+ReactDOM.render(
+  <Provider store={store}>
+    <Router history={browserHistory}>
+      <Route path="/" component={Layout}>
+        <IndexRoute component={Home} />
+        <Route path="rooms">
+          <Route path="new" component={NewRoom}/>
+          <Route path="room/:roomId" component={Room}/>
+        </Route>
+        <Route path="*" component={NoMatch}/>
       </Route>
-      <Route path="*" component={NoMatch}/>
-    </Route>
-  </Router>
-), document.getElementById('root'))
+    </Router>
+  </Provider>, document.getElementById('root'))
